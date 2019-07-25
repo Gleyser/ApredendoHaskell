@@ -86,31 +86,33 @@ menuOpcao = do
 
 opcaoEscolhida :: Int -> IO()
 opcaoEscolhida opcao 
-   | opcao == 1 = do {menuOpcaoPesquisar} 
+   | opcao == 1 = do {novaPesquisa} 
    | opcao == 2 = do {devolver}
    | otherwise =  do {putStrLn "Opcao invalida, por favor escolha uma opcao valida" ; menuOpcao}
 
 pesquisar :: IO()
 pesquisar = putStrLn ("\n\n\n" ++ "pesquisando...." ++ "\n\n")
 
-menuOpcaoPesquisar :: IO()
-menuOpcaoPesquisar = do
-   putStrLn "O que você deseja fazer?"
-   putStrLn "(1) Alugar" 
-   putStrLn "(2) Nova pesquisa"
-   putStrLn "(3) Sair"    
-   putStrLn "\nOpcao: "
-   opcao <- getLine
-   if (read opcao) == 3 then putStrLn("Fim") else do opcaoEscolhidaPesquisar (read opcao)
-
 opcaoEscolhidaPesquisar :: Int -> IO()
 opcaoEscolhidaPesquisar opcao 
    | opcao == 1 = do {alugar} 
    | opcao == 2 = do {novaPesquisa}
-   | otherwise =  do {putStrLn "Opcao invalida, por favor escolha uma opcao valida" ; menuOpcaoPesquisar}
+   | otherwise =  do {putStrLn "Opcao invalida, por favor escolha uma opcao valida" ; menuOpcao}
 
 alugar :: IO()
-alugar = putStrLn ("\n\n\n" ++ "alugando...." ++ "\n\n")
+alugar = do
+   putStrLn "==> Deseja alugar algum dos carros? "
+   putStrLn "(1) SIM" 
+   putStrLn "(2) NÃO"       
+   putStrLn "\nOpcao: "
+   opcao <- getLine
+   if (read opcao) == 2 then do {putStrLn "ok! voltemos ao menu principal" ; menuOpcao} else putStrLn "Vamos lá então!")
+   do {alugarCarro}
+   
+alugarCarro :: IO()
+alugarCarro = do
+   putStrLn "==> to aqui "
+   
 
 novaPesquisa :: IO()
 novaPesquisa = do
@@ -123,8 +125,9 @@ novaPesquisa = do
    let carrosNoDestino = filter (\review -> cidade review == cidadeDestino) carrosCadastrados
    let carrosNaPartida = filter (\review -> cidade review == cidadePartida) carrosCadastrados
    let carrosNaPartidaComCapacidade = filter (\review -> capacidade review >= (read quantidadeDePessoas)) carrosNaPartida
-   if contaNumeroDeCarros(carrosNoDestino) == 0 || contaNumeroDeCarros(carrosNaPartida) == 0 then do {putStrLn "Infelizmente não temos lojas/carros na cidade de destino/partida" ; menuOpcaoPesquisar}   else do {putStrLn (listarCarros(carrosNaPartidaComCapacidade))}
-
+   if contaNumeroDeCarros(carrosNoDestino) == 0 || contaNumeroDeCarros(carrosNaPartida) == 0 then do {putStrLn "Infelizmente não temos lojas/carros na cidade de destino/partida" ; menuOpcao}   else do {putStrLn(listarCarros(carrosNaPartidaComCapacidade))}
+   do {alugar}
+   
 listarCarros :: [Car] -> String
 listarCarros  [] = ""
 listarCarros  (x:xs) = toStringCarro x ++ ['\n'] ++ listarCarros xs
